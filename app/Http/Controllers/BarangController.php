@@ -14,12 +14,11 @@ class BarangController extends Controller
      */
     public function index()
     {
-        $barang = \App\Models\Barang::all();
-        return view('onetel.barang',['barang' => $barang]);
+
         //fungsi eloquent menampilkan data menggunakan pagination 
-        $mahasiswas = Mahasiswa::all(); // Mengambil semua isi tabel 
-        $posts = Mahasiswa::orderBy('Nim', 'desc')->paginate(6); 
-        return view('mahasiswas.index', compact('mahasiswas')); 
+        $barangs = Barang::all(); // Mengambil semua isi tabel 
+        $posts = Barang::orderBy('id_barang', 'asc')->paginate(6); 
+        return view('barang.index', compact('barangs')); 
         with('i', (request()->input('page', 1) - 1) * 5);
     }
 
@@ -41,7 +40,16 @@ class BarangController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([ 
+            'kode_barang' => 'required', 
+            'nama_barang' => 'required', 
+            'Kelas' => 'required', '
+            Jurusan' => 'required', 
+            'No_Handphone' => 'required', ]); 
+        //fungsi eloquent untuk menambah data 
+        Mahasiswa::create($request->all()); 
+        //jika data berhasil ditambahkan, akan kembali ke halaman utama 
+        return redirect()->route('mahasiswas.index') ->with('success', 'Mahasiswa Berhasil Ditambahkan');
     }
 
     /**
