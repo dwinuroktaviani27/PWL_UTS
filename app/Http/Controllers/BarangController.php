@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Barang;
 
 class BarangController extends Controller
 {
@@ -13,7 +14,13 @@ class BarangController extends Controller
      */
     public function index()
     {
-        //
+        $barang = \App\Models\Barang::all();
+        return view('onetel.barang',['barang' => $barang]);
+        //fungsi eloquent menampilkan data menggunakan pagination 
+        $mahasiswas = Mahasiswa::all(); // Mengambil semua isi tabel 
+        $posts = Mahasiswa::orderBy('Nim', 'desc')->paginate(6); 
+        return view('mahasiswas.index', compact('mahasiswas')); 
+        with('i', (request()->input('page', 1) - 1) * 5);
     }
 
     /**
