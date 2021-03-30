@@ -15,11 +15,8 @@ class BarangController extends Controller
     public function index()
     {
 
-        //fungsi eloquent menampilkan data menggunakan pagination 
-        $barangs = Barang::all(); // Mengambil semua isi tabel 
-        $posts = Barang::orderBy('id_barang', 'asc')->paginate(6); 
-        return view('barang.index', compact('barangs')); 
-        with('i', (request()->input('page', 1) - 1) * 5);
+        $barangs = \App\Models\Barang::all();
+        return view('barang.index',['barangs' => $barangs]);
     }
 
     /**
@@ -29,7 +26,7 @@ class BarangController extends Controller
      */
     public function create()
     {
-        //
+        return view('barang.create');
     }
 
     /**
@@ -40,16 +37,15 @@ class BarangController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([ 
-            'kode_barang' => 'required', 
-            'nama_barang' => 'required', 
-            'Kelas' => 'required', '
-            Jurusan' => 'required', 
-            'No_Handphone' => 'required', ]); 
-        //fungsi eloquent untuk menambah data 
-        Mahasiswa::create($request->all()); 
-        //jika data berhasil ditambahkan, akan kembali ke halaman utama 
-        return redirect()->route('mahasiswas.index') ->with('success', 'Mahasiswa Berhasil Ditambahkan');
+        $barang = New Barang;
+        $barang->kode_barang = $request->kode_barang;
+        $barang->nama_barang = $request->nama_barang;
+        $barang->kategori_barang = $request->kategori_barang;
+        $barang->harga = $request->harga;
+        $barang->qty = $request->qty;
+
+        $barang->save();
+        return redirect('/barang')->with('status', 'Data Barang berhasil ditambahkan');
     }
 
     /**
@@ -58,9 +54,10 @@ class BarangController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($id_barang)
     {
-        //
+        $barangs = Barang::find($id_barang); 
+        return view('barang.edit',['barangs' => $barangs]);
     }
 
     /**
@@ -69,9 +66,11 @@ class BarangController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit($kode_barang)
     {
-        //
+        //menampilkan detail data dengan menemukan berdasarkan Nim Mahasiswa untuk diedit 
+        $barangs = Barang::find($kode_barang); 
+        return view('barang.edit',['barangs' => $barangs]);
     }
 
     /**
@@ -81,9 +80,26 @@ class BarangController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $kode_barang)
     {
-        //
+        $barang = New Barang;
+        $barang->kode_barang = $request->kode_barang;
+        $barang->nama_barang = $request->nama_barang;
+        $barang->kategori_barang = $request->kategori_barang;
+        $barang->harga = $request->harga;
+        $barang->qty = $request->qty;
+
+        $barang->update();
+        return redirect('/barang')->with('status', 'Data Barang berhasil diupdate');
+
+        // $request->validate([ 
+        //     'kode_barang' => 'required', 
+        //     'nama_barang' => 'required', 
+        //     'kategori_barang' => 'required', 
+        //     'harga' => 'required', 
+        //     'qty' => 'required', ]); //fungsi eloquent untuk mengupdate data inputan kita 
+        //     Barang::find($kode_barang)->update($request->all()); //jika data berhasil diupdate, akan kembali ke halaman utama 
+        //     return redirect()->route('barang.index') ->with('success', 'Data Barang Berhasil Diupdate');
     }
 
     /**
@@ -92,8 +108,10 @@ class BarangController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($id_barang)
     {
-        //
+        //fungsi eloquent untuk menghapus data 
+        Barang::find($id_barang)->delete(); 
+        return redirect()->route('barang.index') -> with('success', 'Data Barang Berhasil Dihapus');
     }
 }
